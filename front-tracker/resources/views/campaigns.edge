@@ -1,0 +1,84 @@
+{{ style('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') }}
+{{ script('https://code.jquery.com/jquery-3.3.1.min.js') }}
+{{ script('/js/campaign-table.js')}}
+
+<main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
+	<h4>Campaign Analytics</h4>
+	<h6>By Product</h6>
+	<form class="" action="/campaign/add" method="post" enctype="multipart/form-data">
+		{{ csrfField() }}
+		<input type="file" name="csv-file">
+		<button class="btn btn-primary" type="submit">+ New Campaign Data</button>
+	</form>
+
+	<table class="table table-striped">
+	  <thead>
+		  <tr>
+			  <form class="" action="/campaigns" method="get">
+				  <th scope="col">
+    	  			  <h6>Filter</h6>
+					  <input id="sort-by" type="hidden" name="sort" value="">
+					  <input id="order-by" type="hidden" name="order_by" value="">
+
+    	  			  <div class="" style="display:flex; flex-direction:row;">
+    	  				  <div  class="product-filter-section">
+    	  					  <label>By Product</label>
+    	          			  <select class="" name="product">
+    	          				  <option value="all">All</option>
+    	          				  @each(product in products)
+    	          				  	<option value="{{ product.id }}">{{ product.name }}</option>
+    	          				  @endeach
+    	          			  </select>
+    	  				  </div>
+    	  				  <div style="margin-left:15px;" class="source-filter-section">
+    	  					  <label>By Source</label>
+    	          			  <select class="" name="source">
+    	          				  <option value="all">All</option>
+    	          				  @each(source in sources)
+    	          				  	<option value="{{ source.id }}">{{ source.name }}</option>
+    	          				  @endeach
+    	          			  </select>
+    	  				  </div>
+    					  <div style="margin-left:15px;" class="date-filter-section">
+    					  	  <label>By Date</label>
+    						  <input type="text" name="date_from" value="" placeholder="04/10/2019">
+    						  <input type="text" name="date_to" value="" placeholder="04/12/2019">
+    					  </div>
+						  <button id="submit-query-builder" style="margin-left:15px;" type="submit" class="btn btn-primary">Apply Filter</button>
+    	  			  </div>
+      		  	  </th>
+			  </form>
+
+    	      <th scope="col"></th>
+    	      <th scope="col"></th>
+    	      <th scope="col"></th>
+    	  </tr>
+	  </thead>
+  	</table>
+
+	<table class="table table-striped">
+	  <thead>
+
+	    <tr>
+	      <th class="sort-by-columns" data-value="product" style="cursor:pointer;" scope="col">Product</th>
+	      <th class="sort-by-columns"  data-value="source" style="cursor:pointer;" scope="col">Source</th>
+	      <th class="sort-by-columns"  data-value="clicks" style="cursor:pointer;" scope="col">Clicks</th>
+	      <th class="sort-by-columns"  data-value="date" style="cursor:pointer;" scope="col">Date</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+		  @each(campaign in campaigns)
+			  <tr>
+				<th scope="row">{{ campaign.product_name }}</th>
+				<td>{{ campaign.source_name }}</td>
+				<td>{{ campaign.clicks }}</td>
+				<td>{{ campaign.campaign_date }}</td>
+			  </tr>
+		  @else
+			<tr>
+				<td colspan=4>No matching records.</td>
+			</tr>
+		  @endeach
+	  </tbody>
+	</table>
+</main>
