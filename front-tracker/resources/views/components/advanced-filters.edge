@@ -1,0 +1,35 @@
+<div style="margin-left:15px;" class="date-filter-section" style="display:flex; flex-direction:column !important;">
+	<div class="">
+		<label>Click Threshold</label>
+		<input style="height:30px;" class="form-control" autocomplete="off" type="text" name="click_threshold" value="{{ '' }}" placeholder="ex. 100">
+	</div>
+	<div class=""  style="margin-top:5px;">
+		<!-- <label>To</label>
+		<input style="height:30px;" class="form-control" autocomplete="off" style="" type="text" name="date_to" value="{{ '' }}" placeholder="MM-DD-YYYY"> -->
+		<div class="" style="display:flex;flex-direction:row;">
+			<div class="" style="display:flex;flex-direction:column;">
+				<label style="font-size:13px;">Product Clicks</label>
+				<!-- <select class="form-control"  name="product" value="">
+					<option value="all">All</option>
+					@each(product in products)
+					  <option {{ prev_criteria.prev_product_filter == product.id ? 'selected' : '' }} value="{{ product.id }}">{{ product.name }}</option>
+					@endeach
+				</select> -->
+				<button style="width:10px;" type="checkbox" id="product-clicks"></button>
+			</div>
+
+			<div class="" style="display:flex;flex-direction:column;margin-left:5px;">
+				<label style="font-size:13px;">Source Clicks</label>
+				<!-- <select class="form-control"  name="product" value="">
+					<option value="all">All</option>
+					@each(product in products)
+					  <option {{ prev_criteria.prev_product_filter == product.id ? 'selected' : '' }} value="{{ product.id }}">{{ product.name }}</option>
+					@endeach
+				</select> -->
+				<button style="width:10px;" type="checkbox" id="source-clicks"></button>
+			</div>
+		</div>
+
+
+	</div>
+</div>

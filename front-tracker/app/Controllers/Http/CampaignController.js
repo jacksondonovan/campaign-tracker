@@ -1,34 +1,42 @@
 'use strict'
 
 const Database = use('Database')
-const csv = require('csv-parser');
-const fs = require('fs');
+const csv = require('csv-parser')
+const fs = require('fs')
+const moment = require('moment')
+const PAGINATION_LIMIT = 75
 
 class CampaignController {
 	/*
 	Function to get all campaign data records with filter criteria
 	@author Jackson Donovan
 	*/
-	async get({ request, response, view }) {
+	async get({ request, response, view, params }) {
 		const data = request.except(['_csrf'])
 		let campaigns
-		let where_conditions = 'campaigns.id IS NOT NULL'
-		console.log('get campaign data: ', request.except(['_csrf']));
-
-		if(data.product && data.product !== 'all') {
-			where_conditions += ` AND product_id = ${data.product}`
+		let where_conditions = this.setWhereConditions(data)
+		let [query_contains_sort, column] = this.queryContainsSort(data)
+		let prev_criteria = {
+			prev_sort_by: data.sort || '',
+			prev_order_by: data.order_by || '',
+			prev_product_filter: data.product || '',
+			prev_source_filter: data.source || '',
+			prev_date_from : data.date_from || '',
+			prev_date_to: data.date_to || '',
+			prev_click_threshold: data.click_threshold || ''
 		}
-		if(data.source && data.source !== 'all') {
-			where_conditions += ` AND source_id = ${data.source}`
-		}
+		params.pagination = (params.pagination) ? params.pagination : 1
 
-		if(!data.sort && !data.orderby) {
+		// If the query doesn't include sort, omit the .orderBy() method.
+		if(query_contains_sort) {
 			campaigns = await Database
 				.table('campaigns')
 				.select('*', {source_name: 'adcellerant.sources.name'}, {product_name: 'adcellerant.products.name'})
 				.leftJoin('products', 'campaigns.product_id', 'products.id')
 				.leftJoin('sources', 'campaigns.source_id', 'sources.id')
 				.whereRaw(where_conditions)
+				.orderBy(column, data.order_by)
+				.paginate(params.pagination, PAGINATION_LIMIT)
 		}
 		else {
 			campaigns = await Database
@@ -37,18 +45,44 @@ class CampaignController {
 				.leftJoin('products', 'campaigns.product_id', 'products.id')
 				.leftJoin('sources', 'campaigns.source_id', 'sources.id')
 				.whereRaw(where_conditions)
-				.orderBy(`sources.name`, data.order_by)
+				.paginate(params.pagination, PAGINATION_LIMIT)
 		}
 
+		//turn this and maybe the conditional above this, into a function. campaigns = ()
+		if(data.product_clicks == 'true' || data.source_clicks == 'true') {
+			let click_sum_raw_query = 'SELECT SUM(campaigns.clicks) AS total_clicks FROM campaigns LEFT JOIN products ON campaigns.product_id=products.id LEFT JOIN sources ON campaigns.source_id=sources.id WHERE campaigns.id > 0'
 
+			let query_params = []
 
-		const products = await Database.table('products').select(['id', 'name'])
-		const sources = await Database.table('sources').select(['id', 'name'])
+			if(data.product !== 'all') {
+				click_sum_raw_query += ' AND product_id = ?'
+				query_params.push(data.product)
+			}
+			if(data.source !== 'all') {
+				click_sum_raw_query += ' AND source_id = ?'
+				query_params.push(data.source)
+			}
+			if(data.date_from !== '') {
+				click_sum_raw_query += ' AND (campaign_date >= ?)'
+				query_params.push(data.date_from)
+			}
+			if(data.date_to !== '') {
+				click_sum_raw_query += ' AND (campaign_date <= ?)'
+				query_params.push(data.date_to)
+			}
+
+			let total_clicks = await Database.raw(click_sum_raw_query, query_params)
+
+			total_clicks = total_clicks[0]
+			campaigns.data.total_clicks = total_clicks[0].total_clicks
+		}
 
 		return view.render('campaigns.edge', {
 			campaigns: campaigns,
-			products: products,
-			sources: sources
+			products: await Database.table('products').select(['id', 'name']) || '',
+			sources: await Database.table('sources').select(['id', 'name']) || '',
+			prev_criteria: prev_criteria,
+			current_pagination: params.pagination
 		 })
 	}
 
@@ -85,6 +119,51 @@ class CampaignController {
 
 		  response.redirect('/campaigns')
 
+	}
+
+	setWhereConditions(data) {
+		let conditions = 'campaigns.id IS NOT NULL'
+		let keys = Object.keys(data)
+
+		for(let i = 0; i < keys.length; i++) {
+			if(keys[i] == 'product' && data['product'] !== 'all') {
+				conditions += ` AND ${keys[i]}_id = ${data[keys[i]]}`
+			}
+			if(keys[i] == 'source' && data['source'] !== 'all') {
+				conditions += ` AND ${keys[i]}_id = ${data[keys[i]]}`
+			}
+			if(keys[i] == 'date_from' && data['date_from']) {
+				conditions += ` AND (campaign_date >= '${data[keys[i]]}')`
+			}
+			if(keys[i] == 'date_to' && data['date_to']) {
+				conditions += ` AND (campaign_date <= '${data[keys[i]]}')`
+			}
+			if(keys[i] == 'click_threshold' && data['click_threshold']) {
+				conditions += ` AND (clicks >= ${Number(data[keys[i]])})`
+			}
+		}
+
+		return conditions
+	}
+
+	queryContainsSort(filter_options) {
+		if(filter_options.sort && filter_options.order_by) {
+			let sort_by
+			if(filter_options.sort == 'product') {
+				sort_by = 'products.name'
+			}
+			else if(filter_options.sort == 'source') {
+				sort_by = 'sources.name'
+			}
+			else if(filter_options.sort == 'clicks') {
+				sort_by = 'campaigns.clicks'
+			}
+			else if(filter_options.sort == 'date') {
+				sort_by = 'campaigns.campaign_date'
+			}
+			return [true, sort_by]
+		}
+		return [false, false]
 	}
 }
 

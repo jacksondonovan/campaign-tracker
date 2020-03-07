@@ -22,9 +22,9 @@ Route.get('/users', async () => {
 	return await Database.table('users').select('*')
 })
 
-Route.get('/sources', 			'SourceController.get')
-Route.get('/products', 			'ProductController.get')
-Route.get('/campaigns',			'CampaignController.get')
-Route.post('/campaign/add',		'CampaignController.add')
+Route.get('/sources', 							'SourceController.get')
+Route.get('/products', 							'ProductController.get')
+Route.get('/campaigns/:pagination?',			'CampaignController.get')
+Route.post('/campaign/add',						'CampaignController.add')
 
 Route.on('/').render('welcome')
