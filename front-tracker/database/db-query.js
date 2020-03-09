@@ -9,7 +9,7 @@ async function getCampaigns(data, pagination) {
 	if(query_contains_sort) {
 		campaigns = await Database
 			.table('campaigns')
-			.select('*', {source_name: 'adcellerant.sources.name'}, {product_name: 'adcellerant.products.name'})
+			.select('*', {source_name: 'sources.name'}, {product_name: 'products.name'})
 			.leftJoin('products', 'campaigns.product_id', 'products.id')
 			.leftJoin('sources', 'campaigns.source_id', 'sources.id')
 			.whereRaw(where_conditions)
@@ -19,7 +19,7 @@ async function getCampaigns(data, pagination) {
 	else {
 		campaigns = await Database
 			.table('campaigns')
-			.select('*', {source_name: 'adcellerant.sources.name'}, {product_name: 'adcellerant.products.name'})
+			.select('*', {source_name: 'sources.name'}, {product_name: 'products.name'})
 			.leftJoin('products', 'campaigns.product_id', 'products.id')
 			.leftJoin('sources', 'campaigns.source_id', 'sources.id')
 			.whereRaw(where_conditions)
