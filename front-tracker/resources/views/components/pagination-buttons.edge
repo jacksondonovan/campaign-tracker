@@ -1,10 +1,9 @@
-<div class="" style="display:flex; flex-direction: row;">
-	<span style="margin-right:5px;">Page</span>
-	<div class="button-container">
-
-	</div>
+<div class="pagination-display">
+	<span>Page</span>
+	<div class="button-container"></div>
 </div>
 
 <input id="last-page" type="hidden" value="{{ last_page }}">
 
+{{ style('/styles/pagination-buttons.css') }}
 {{ script('/js/pagination-buttons.js') }}

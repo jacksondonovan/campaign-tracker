@@ -1,0 +1,66 @@
+.column-header-label {
+	display: flex;
+	justify-content: flex-start;
+	position: relative;
+	top: 20px;
+}
+.column-header-icon {
+	display: flex;
+	justify-content: flex-end;
+}
+.sort-by-columns {
+	cursor: pointer;
+}
+.filter-header {
+	border-bottom: none !important;
+}
+.filter-container, .checkbox-row {
+	display: flex;
+	flex-direction: row;
+}
+.product-source-filters, .product-clicks-checkbox {
+	display: flex;
+	flex-direction: column;
+}
+.filter-dropdowns {
+	height: 30px !important;
+}
+.lower-input, .checkbox-input-container {
+	margin-top: 5px;
+}
+.date-filter-section {
+	margin-left: 15px;
+	display: flex;
+	flex-direction: column !important;
+}
+.date-input {
+	height: 30px;
+}
+.checkbox-label {
+	font-size: 13px;
+}
+.source-clicks-checkbox {
+	display: flex;
+	flex-direction: column;
+	margin-left: 5px;
+}
+.apply-filter {
+	display: flex;
+	flex-direction: column;
+	margin-top: 54px;
+}
+#advanced-filter-section {
+	display: none;
+}
+button#submit-query-builder {
+	height: 40px;
+	width: 150px;
+	margin-left: 10px;
+}
+#advanced-filters {
+	margin-left: 10px;
+	margin-bottom: 10px;
+	color: blue;
+	cursor: pointer;
+	font-size: 11px;
+}

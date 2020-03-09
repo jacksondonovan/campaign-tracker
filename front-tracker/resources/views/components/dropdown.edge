@@ -1,0 +1,8 @@
+<label>{{ label }}</label>
+
+<select class="{{ class_name }}" name="{{ filter_name }}">
+	<option value="all">All</option>
+		@each(option in options)
+		  <option {{ option_selected == option.id ? 'selected' : '' }} value="{{ option.id }}">{{ option.name }}</option>
+		@endeach
+</select>

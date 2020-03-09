@@ -10,80 +10,54 @@ $(document).ready(function(){
 	let product_clicks = url.searchParams.get('product_clicks')
 	let source_clicks = url.searchParams.get('source_clicks')
 
+	if(sort_param) {
+		$('#' + sort_param + '-header-icon').text( order_by_param == 'asc' ? 'expand_less' : 'expand_more')
+	}
+
+	if(product_clicks || source_clicks) {
+		let date_text = ''
+		if(date_from_param && date_to_param) {
+			date_text = date_from_param + ' to ' + date_to_param
+		}
+		if(date_from_param && !date_to_param) {
+			date_text = 'Since ' + date_from_param
+		}
+		if(!date_from_param && date_to_param) {
+			date_text = date_to_param + ' and before'
+		}
+		if(!date_from_param && !date_to_param) {
+			date_text = 'All Dates'
+		}
+		$('#product-campaign-table').children().first().children().last().text(date_text)
+	}
+
 	$('input[name=date_from]').datepicker({ dateFormat: 'mm-dd-yy' })
 	$('input[name=date_to]').datepicker({ dateFormat: 'mm-dd-yy' })
 
 	$('input[name=product_clicks]').val((product_clicks == 'true') ? true : '')
 	$('input[name=source_clicks]').val((source_clicks == 'true') ? true : '')
+
 	$('#product-clicks').attr('checked', (product_clicks == 'true') ? true : false)
 	$('#source-clicks').attr('checked', (source_clicks == 'true') ? true : false)
 
+	$('#advanced-filter-section').css('display', (click_threshold || product_clicks || source_clicks) ? 'inherit' : 'none')
+
 	$('input#product-clicks').on('click', function(e) {
-		if($('input[name=product_clicks]').val() == 'true') {
-			$('input[name=product_clicks]').val('')
-		}
-		else {
-			$('input[name=product_clicks]').val('true')
-		}
+		$('input[name=product_clicks]').val( ($('input[name=product_clicks]').val() == 'true') ? '' : 'true')
 	})
+
 	$('input#source-clicks').on('click', function(e) {
-		if($('input[name=source_clicks]').val() == 'true') {
-			$('input[name=source_clicks]').val('')
-		}
-		else {
-			$('input[name=source_clicks]').val('true')
-		}
+		$('input[name=source_clicks]').val( ($('input[name=source_clicks]').val() == 'true') ? '' : 'true')
 	})
-
-
-
-	if(sort_param) {
-		$('#' + sort_param + '_header_icon').text( order_by_param == 'asc' ? 'expand_less' : 'expand_more')
-	}
-
-	if(click_threshold || product_clicks || source_clicks) {
-		$('#advanced-filter-section').css('display', 'inherit')
-		$('#advanced-filters').text('Hide Advanced Filters')
-	}
-	else {
-		$('#advanced-filter-section').css('display', 'none')
-	}
-
-	if(product_clicks || source_clicks) {
-		let $row_one = $('#product-campaign-table').children().first()
-
-		$('#product-campaign-table').empty()
-		$('#product-campaign-table').append($row_one)
-
-		$row_one.children().eq(0).text((product_param == 'all') ? 'All Products' : $row_one.attr('id'))
-		$row_one.children().eq(1).text((source_param == 'all') ? 'All Sources' : $row_one.attr('data-value'))
-		$row_one.children().eq(2).text($('#total-click-count').val())
-		$row_one.children().eq(3).text((date_from_param && date_to_param) ? date_from_param + '  to  ' + date_to_param : 'All Dates')
-	}
 
 	$('#advanced-filters').on('click', function() {
-		if( $(this).text() == 'Advanced Filters') {
-			$(this).text('Hide Advanced Filters')
-			$('#advanced-filter-section').css('display', 'inherit')
-		}
-		else {
-			$(this).text('Advanced Filters')
-			$('#advanced-filter-section').css('display', 'none')
-		}
+		$('#advanced-filter-section').css('display', ($(this).text() == 'Advanced Filters') ? 'inherit' : 'none')
+		$(this).text( ($(this).text() == 'Advanced Filters') ? 'Hide Advanced Filters' : 'Advanced Filters' )
 	})
 
 	$('.sort-by-columns').on('click', function() {
-		let prev_sort_by = $('#sort-by').val()
-		let prev_order_by = $('#order-by').val()
-
-		if( $(this).attr('data-value') == prev_sort_by && prev_order_by == 'asc' ) {
-			$('#order-by').val('desc')
-		}
-		else {
-			$('#order-by').val('asc')
-		}
-
 		$('#sort-by').val($(this).attr('data-value'))
+		$('#order-by').val(($(this).attr('data-value') == sort_param && order_by_param == 'asc') ? 'desc' : 'asc')
 		resetPagination('form.filter-campaigns', 'campaigns')
 	})
 
