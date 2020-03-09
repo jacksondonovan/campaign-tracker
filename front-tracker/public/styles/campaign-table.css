@@ -1,3 +1,21 @@
+.left-title-header {
+	margin-top: 15px;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+.add-campaign-data-form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.add-campaign-data-form input {
+	margin-top:5px;
+}
+.add-campaign-data-form button {
+	margin-top:5px;
+	width:75%;
+}
 .column-header-label {
 	display: flex;
 	justify-content: flex-start;
@@ -14,7 +32,7 @@
 .filter-header {
 	border-bottom: none !important;
 }
-.filter-container, .checkbox-row {
+.filter-container, .checkbox-row, .main-page-header {
 	display: flex;
 	flex-direction: row;
 }
@@ -49,6 +67,15 @@
 	flex-direction: column;
 	margin-top: 54px;
 }
+.sidenav {
+  padding-top: 20px;
+  background-color:#DCDCDC;
+  height: 100%;
+  overflow: hidden;
+  margin-bottom: -5000px;
+  padding-bottom: 5000px;
+}
+
 #advanced-filter-section {
 	display: none;
 }

@@ -1,148 +1,177 @@
-{{ style('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') }}
-{{ style('http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css')}}
 {{ script('https://code.jquery.com/jquery-3.3.1.min.js') }}
 {{ script('http://code.jquery.com/jquery-1.10.2.js')}}
 {{ script('http://code.jquery.com/ui/1.11.0/jquery-ui.js')}}
 {{ script('/js/campaign-table.js') }}
 {{ style('/styles/campaign-table.css') }}
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<main class="main-content col-lg-10 col-md-9 col-sm-12 p-0 offset-lg-2 offset-md-3">
-	<h4>Campaign Analytics</h4>
-	<h6>By Product</h6>
-	<form class="" action="/campaign/add" method="post" enctype="multipart/form-data">
-		{{ csrfField() }}
-		<input type="file" name="csv-file">
-		<button class="btn btn-primary" type="submit">+ New Campaign Data</button>
-	</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Campaign Analytics</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" rel="stylesheet">
+</head>
+<body>
 
-	<table class="table">
-	  <thead>
-		  <tr>
-			  <form class="filter-campaigns" action="/campaigns/{{current_pagination}}" method="get">
-				  <th scope="col" class="filter-header">
-					  <input id="sort-by" type="hidden" name="sort" value="{{ filter_criteria.sort || '' }}">
-					  <input id="order-by" type="hidden" name="order_by" value="{{ filter_criteria.order_by || '' }}">
+@!component('components.navbar')
 
-    	  			  <div class="filter-container">
-						  <section class="product-source-filters">
-							  <div class="product-filter-section">
-								  @!component('components.dropdown', {
-									  label: 'By Product',
-									  class_name: 'form-control filter-dropdowns',
-									  filter_name: 'product',
-									  option_selected: filter_criteria.product,
-									  options: products
-								  })
-        	  				  </div>
-        	  				  <div class="source-filter-section lower-input">
-								  @!component('components.dropdown', {
-									  label: 'By Source',
-									  class_name: 'form-control filter-dropdowns',
-									  filter_name: 'source',
-									  option_selected: filter_criteria.source,
-									  options: sources
-								  })
-        	  				  </div>
-						  </section>
-						  <section>
-							  <div class="date-filter-section">
-								  <div>
-									  <label>From</label>
-    								  <input class="form-control date-input" autocomplete="off" type="text" name="date_from" value="{{ filter_criteria.date_from || '' }}" placeholder="MM-DD-YYYY">
+<div class="container-fluid text-center">
+	<div class="row content">
+    <div class="col-sm-1 sidenav">
+		<p><a href="#">Adonis</a></p>
+        <p><a href="#"></a></p>
+    </div>
+	<main class="main-content col-lg-11 col-md-11 col-sm-11 p-0">
+		<div class="col-md-12 main-page-header">
+			<div class="col-md-3 left-title-header">
+				<h4>Campaign Analytics</h4>
+				<h6 style="margin-left:0;">By Product</h6>
+			</div>
+			<div class="col-md-3"></div>
+			<div class="col-md-2"></div>
+
+			<div class="col-md-4" >
+				<form class="add-campaign-data-form" action="/campaign/add" method="post" enctype="multipart/form-data">
+					{{ csrfField() }}
+					<input type="file" name="csv-file">
+					<button class="btn btn-primary" type="button">+ Campaign Data</button>
+				</form>
+			</div>
+		</div>
+		<table class="table">
+		  <thead>
+			  <tr>
+				  <form class="filter-campaigns" action="/campaigns/{{current_pagination}}" method="get">
+					  <th scope="col" class="filter-header">
+						  <input id="sort-by" type="hidden" name="sort" value="{{ filter_criteria.sort || '' }}">
+						  <input id="order-by" type="hidden" name="order_by" value="{{ filter_criteria.order_by || '' }}">
+
+	    	  			  <div class="filter-container">
+							  <section class="product-source-filters">
+								  <div class="product-filter-section">
+									  @!component('components.dropdown', {
+										  label: 'Product',
+										  class_name: 'form-control filter-dropdowns',
+										  filter_name: 'product',
+										  option_selected: filter_criteria.product,
+										  options: products
+									  })
+	        	  				  </div>
+	        	  				  <div class="source-filter-section lower-input">
+									  @!component('components.dropdown', {
+										  label: 'Source',
+										  class_name: 'form-control filter-dropdowns',
+										  filter_name: 'source',
+										  option_selected: filter_criteria.source,
+										  options: sources
+									  })
+	        	  				  </div>
+							  </section>
+							  <section>
+								  <div class="date-filter-section">
+									  <div>
+										  <label>From</label>
+	    								  <input class="form-control date-input" autocomplete="off" type="text" name="date_from" value="{{ filter_criteria.date_from || '' }}" placeholder="MM-DD-YYYY">
+									  </div>
+									  <div class="lower-input">
+										  <label>To</label>
+	    								  <input class="form-control date-input" autocomplete="off" type="text" name="date_to" value="{{ filter_criteria.date_to || '' }}" placeholder="MM-DD-YYYY">
+									  </div>
+	        					  </div>
+							  </section>
+							  <section id="advanced-filter-section">
+								  <div class="date-filter-section">
+								  	<div>
+								  		<label>Click Threshold</label>
+								  		<input class="form-control date-input" autocomplete="off" type="text" name="click_threshold" value="{{ filter_criteria.click_threshold || '' }}" placeholder="ex. 100">
+								  	</div>
+								  	<div class="checkbox-input-container">
+								  		<div class="checkbox-row">
+								  			<div class="product-clicks-checkbox">
+								  				<label class="checkbox-label">Product Clicks</label>
+												<input type="hidden" name="product_clicks" value="">
+
+								  				<input {{ (filter_criteria.product_clicks) ? 'selected' : ''}}  type="checkbox" id="product-clicks"></input>
+								  			</div>
+								  			<div class="source-clicks-checkbox">
+								  				<label class="checkbox-label">Source Clicks</label>
+												<input type="hidden" name="source_clicks" value="">
+
+								  				<input {{ (filter_criteria.source_clicks) ? 'selected' : ''}}  type="checkbox" id="source-clicks"></input>
+								  			</div>
+								  		</div>
+								  	</div>
 								  </div>
-								  <div class="lower-input">
-									  <label>To</label>
-    								  <input class="form-control date-input" autocomplete="off" type="text" name="date_to" value="{{ filter_criteria.date_to || '' }}" placeholder="MM-DD-YYYY">
+							  </section>
+							  <section >
+								  <div class="apply-filter">
+									<a id="advanced-filters">{{ (filter_criteria.click_threshold || filter_criteria.product_clicks || filter_criteria.source_clicks) ? 'Hide Advanced Filters' : 'Advanced Filters' }}</a>
+	  							  	<button id="submit-query-builder" type="button" class="btn btn-primary">Apply Filter</button>
 								  </div>
-        					  </div>
-						  </section>
-						  <section id="advanced-filter-section">
-							  <div class="date-filter-section">
-							  	<div>
-							  		<label>Click Threshold</label>
-							  		<input class="form-control date-input" autocomplete="off" type="text" name="click_threshold" value="{{ filter_criteria.click_threshold || '' }}" placeholder="ex. 100">
-							  	</div>
-							  	<div class="checkbox-input-container">
-							  		<div class="checkbox-row">
-							  			<div class="product-clicks-checkbox">
-							  				<label class="checkbox-label">Product Clicks</label>
-											<input type="hidden" name="product_clicks" value="">
+							  </section>
+	    	  			  </div>
+	      		  	  </th>
+				  </form>
 
-							  				<input {{ (filter_criteria.product_clicks) ? 'selected' : ''}}  type="checkbox" id="product-clicks"></input>
-							  			</div>
-							  			<div class="source-clicks-checkbox">
-							  				<label class="checkbox-label">Source Clicks</label>
-											<input type="hidden" name="source_clicks" value="">
+	    	      <th class="filter-header" scope="col"></th>
+	    	      <th class="filter-header" scope="col"></th>
+	    	      <th class="filter-header" scope="col">
+					  @!component('components.pagination-buttons',
+					   	{ last_page: campaigns.lastPage,
+						  submit_form_id: 'submit-query-builder'
+						}
+					  )
+				  </th>
+	    	  </tr>
+		  </thead>
+	  	</table>
 
-							  				<input {{ (filter_criteria.source_clicks) ? 'selected' : ''}}  type="checkbox" id="source-clicks"></input>
-							  			</div>
-							  		</div>
-							  	</div>
-							  </div>
-						  </section>
-						  <section >
-							  <div class="apply-filter">
-								<a id="advanced-filters">{{ (filter_criteria.click_threshold || filter_criteria.product_clicks || filter_criteria.source_clicks) ? 'Hide Advanced Filters' : 'Advanced Filters' }}</a>
-  							  	<button id="submit-query-builder" type="button" class="btn btn-primary">Apply Filter</button>
-							  </div>
-						  </section>
-    	  			  </div>
-      		  	  </th>
-			  </form>
-
-    	      <th class="filter-header" scope="col"></th>
-    	      <th class="filter-header" scope="col"></th>
-    	      <th class="filter-header" scope="col">
-				  @!component('components.pagination-buttons',
-				   	{ last_page: campaigns.lastPage,
-					  submit_form_id: 'submit-query-builder'
-					}
-				  )
+		<table class="table table-striped">
+		  <thead>
+		    <tr>
+		      <th class="sort-by-columns" data-value="product" scope="col">
+				  <span class="column-header-label">Product</span>
+				  <span class="column-header-icon"><i id="product-header-icon" class="material-icons">unfold_more</i></span>
 			  </th>
-    	  </tr>
-	  </thead>
-  	</table>
-
-	<table class="table table-striped">
-	  <thead>
-	    <tr>
-	      <th class="sort-by-columns" data-value="product" scope="col">
-			  <span class="column-header-label">Product</span>
-			  <span class="column-header-icon"><i id="product-header-icon" class="material-icons">unfold_more</i></span>
-		  </th>
-	      <th class="sort-by-columns" data-value="source" scope="col">
-			  <span class="column-header-label">Source</span>
-			  <span class="column-header-icon"><i id="source-header-icon" class="material-icons">unfold_more</i></span>
-		  </th>
-	      <th class="sort-by-columns" data-value="clicks" scope="col">
-			  <span class="column-header-label">Clicks</span>
-			  <span class="column-header-icon"><i id="clicks-header-icon" class="material-icons">unfold_more</i></span>
-		  </th>
-	      <th class="sort-by-columns" data-value="date" scope="col">
-			  <span class="column-header-label">Date</span>
-			  <span class="column-header-icon"><i id="date-header-icon" class="material-icons">unfold_more</i></span>
-		  </th>
-	    </tr>
-	  </thead>
-	  <tbody id="product-campaign-table">
-		  @if(campaigns.data.product_clicks || campaigns.data.source_clicks)
-		  	  @!component('components.campaign-row', {
-				  product_name: filter_criteria.product !== 'all' ? campaigns.data.product_clicks : 'All Products',
-				  source_name: filter_criteria.source_clicks ? campaigns.data.source_clicks : 'All Sources',
-				  total_clicks: campaigns.data.total_clicks.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-				  date_from_filter: filter_criteria.date_from,
-				  date_to_filter: filter_criteria.date_to
-			  })
-		  @else
-			  @each(campaign in campaigns.data)
-				  @!component('components.campaign-row', { campaign: campaign })
+		      <th class="sort-by-columns" data-value="source" scope="col">
+				  <span class="column-header-label">Source</span>
+				  <span class="column-header-icon"><i id="source-header-icon" class="material-icons">unfold_more</i></span>
+			  </th>
+		      <th class="sort-by-columns" data-value="clicks" scope="col">
+				  <span class="column-header-label">Clicks</span>
+				  <span class="column-header-icon"><i id="clicks-header-icon" class="material-icons">unfold_more</i></span>
+			  </th>
+		      <th class="sort-by-columns" data-value="date" scope="col">
+				  <span class="column-header-label">Date</span>
+				  <span class="column-header-icon"><i id="date-header-icon" class="material-icons">unfold_more</i></span>
+			  </th>
+		    </tr>
+		  </thead>
+		  <tbody id="product-campaign-table">
+			  @if(campaigns.data.product_clicks || campaigns.data.source_clicks)
+			  	  @!component('components.campaign-row', {
+					  product_name: filter_criteria.product !== 'all' ? campaigns.data.product_clicks : 'All Products',
+					  source_name: filter_criteria.source_clicks ? campaigns.data.source_clicks : 'All Sources',
+					  total_clicks: campaigns.data.total_clicks.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+					  date_from_filter: filter_criteria.date_from,
+					  date_to_filter: filter_criteria.date_to
+				  })
 			  @else
-				<tr>
-					<td colspan=4>No matching records.</td>
-				</tr>
-			  @endeach
-		  @endif
-	  </tbody>
-	</table>
-</main>
+				  @each(campaign in campaigns.data)
+					  @!component('components.campaign-row', { campaign: campaign })
+				  @else
+					<tr>
+						<td colspan=4>No matching records.</td>
+					</tr>
+				  @endeach
+			  @endif
+		  </tbody>
+		</table>
+	</main>
+	</div>
+</div>
+</body>
+</html>

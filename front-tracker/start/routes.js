@@ -22,6 +22,8 @@ Route.get('/users', async () => {
 	return await Database.table('users').select('*')
 })
 
+//Adonis View Routes
+
 Route.get('/sources', 							'SourceController.get')
 Route.get('/products', 							'ProductController.get')
 Route.get('/campaigns/:pagination?',			'CampaignController.get')

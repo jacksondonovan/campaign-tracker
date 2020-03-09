@@ -29,39 +29,26 @@ async function getCampaigns(data, pagination) {
 	return campaigns
 }
 
-async function getProductByName(name) {
-	let product = await Database.table('products').select('*').where('name', name)
-
-	return product
-}
-
-async function getSourceByName(name) {
-	let source = await Database.table('sources').select('*').where('name', name)
-
-	return source
-}
-
 async function getAllProducts() {
-	let products = await Database.table('products').select(['id', 'name'])
+	let products = await Database
+		.table('products')
+		.select(['id', 'name'])
 
 	return products
 }
 
 async function getAllSources() {
-	let sources = await Database.table('sources').select(['id', 'name'])
+	let sources = await Database
+		.table('sources')
+		.select(['id', 'name'])
 
 	return sources
 }
 
-async function addCampaignData({ source_id, product_id, clicks, campaign_date }) {
+async function addCampaignData(file_data) {
 	await Database
-	.insert({
-		source_id: source_id,
-		product_id: product_id,
-		clicks: clicks,
-		campaign_date: campaign_date
-	})
-	.into('campaigns')
+		.insert(file_data)
+		.into('campaigns')
 }
 
 async function getTotalClicks(data) {
@@ -106,25 +93,25 @@ async function getTotalClicks(data) {
 	return campaigns
 }
 
-function setWhereConditions(data) {
+function setWhereConditions(filter_criteria) {
 	let conditions = 'campaigns.id IS NOT NULL'
-	let keys = Object.keys(data)
+	let keys = Object.keys(filter_criteria)
 
 	for(let i = 0; i < keys.length; i++) {
-		if(keys[i] == 'product' && data['product'] !== 'all') {
-			conditions += ` AND ${keys[i]}_id = ${data[keys[i]]}`
+		if(keys[i] == 'product' && filter_criteria['product'] !== 'all') {
+			conditions += ` AND ${keys[i]}_id = ${filter_criteria[keys[i]]}`
 		}
-		if(keys[i] == 'source' && data['source'] !== 'all') {
-			conditions += ` AND ${keys[i]}_id = ${data[keys[i]]}`
+		if(keys[i] == 'source' && filter_criteria['source'] !== 'all') {
+			conditions += ` AND ${keys[i]}_id = ${filter_criteria[keys[i]]}`
 		}
-		if(keys[i] == 'date_from' && data['date_from']) {
-			conditions += ` AND (campaign_date >= '${data[keys[i]]}')`
+		if(keys[i] == 'date_from' && filter_criteria['date_from']) {
+			conditions += ` AND (campaign_date >= '${filter_criteria[keys[i]]}')`
 		}
-		if(keys[i] == 'date_to' && data['date_to']) {
-			conditions += ` AND (campaign_date <= '${data[keys[i]]}')`
+		if(keys[i] == 'date_to' && filter_criteria['date_to']) {
+			conditions += ` AND (campaign_date <= '${filter_criteria[keys[i]]}')`
 		}
-		if(keys[i] == 'click_threshold' && data['click_threshold']) {
-			conditions += ` AND (clicks >= ${Number(data[keys[i]])})`
+		if(keys[i] == 'click_threshold' && filter_criteria['click_threshold']) {
+			conditions += ` AND (clicks >= ${Number(filter_criteria[keys[i]])})`
 		}
 	}
 
@@ -156,7 +143,5 @@ module.exports = {
 	getTotalClicks,
 	getAllProducts,
 	getAllSources,
-	getProductByName,
-	getSourceByName,
 	addCampaignData
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const { getCampaigns, getTotalClicks, getAllProducts, getAllSources, getProductByName, getSourceByName, addCampaignData } = require('../../../database/db-query')
+const { getCampaigns, getTotalClicks, getAllProducts, getAllSources, addCampaignData } = require('../../../database/db-query')
 const csv = require('csv-parser')
 const fs = require('fs')
 
@@ -35,30 +35,34 @@ class CampaignController {
 	Function to insert csv file data into campaigns table.
 	*/
 	async add({ request, response, view }) {
-		request._files['csv-file'].clientName = request._files['csv-file'].clientName.replace('.csv', '')
-		let split_file_name = request._files['csv-file'].clientName.split('_')
-		let source_name = split_file_name.shift()
-		let campaign_date = split_file_name.join('-')
+		let products = await getAllProducts()
+		let sources = await getAllSources()
+		let [source_name, campaign_date] = this.parseFileName(request._files['csv-file'].clientName)
+		let file_data = []
 
 		fs.createReadStream(request._files['csv-file'].tmpPath)
 		  .pipe(csv())
-		  .on('data', async (row) => {
-			  let product_record = await getProductByName(row.product)
-			  let source_record = await getSourceByName(source_name)
-			  let campaign_data = {
-				  source_id: source_record[0].id,
-				  product_id: product_record[0].id,
+		  .on('data', (row) => {
+			  file_data.push({
+				  source_id: sources.find(source => source.name == source_name).id,
+				  product_id: products.find(product => product.name == row.product).id,
 				  clicks: row.clicks,
 				  campaign_date: campaign_date
-			  }
-
-			  await addCampaignData(campaign_data)
+			  })
 		  })
-		  .on('end', () => {
-		    console.log('CSV file successfully processed')
+		  .on('end', async () => {
+			  await addCampaignData(file_data)
+		      console.log('CSV file successfully processed')
 		  });
 
 		  response.redirect('/campaigns')
+	}
+
+	parseFileName(file_name) {
+		let client_name = file_name.replace('.csv', '')
+		let split_file_name = client_name.split('_')
+
+		return [split_file_name.shift(), split_file_name.join('-')]
 	}
 
 }

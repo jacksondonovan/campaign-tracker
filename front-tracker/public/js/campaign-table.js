@@ -65,6 +65,14 @@ $(document).ready(function(){
 		resetPagination('form.filter-campaigns', 'campaigns')
 	})
 
+	$('.add-campaign-data-form button').on('click', function(e) {
+		e.preventDefault()
+
+		if($('input[name=csv-file]').val()) {
+			$('.add-campaign-data-form').submit()
+		}
+	})
+
 	function resetPagination(form_id, base_path) {
 		$(form_id).attr('action', '/' + base_path + '/1')
 		$(form_id).submit()
