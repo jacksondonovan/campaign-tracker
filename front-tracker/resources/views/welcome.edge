@@ -1,20 +1,44 @@
+{{ script('https://code.jquery.com/jquery-3.3.1.min.js') }}
+{{ script('http://code.jquery.com/jquery-1.10.2.js')}}
+{{ script('http://code.jquery.com/ui/1.11.0/jquery-ui.js')}}
+{{ script('/js/campaign-table.js') }}
+{{ style('/styles/campaign-table.css') }}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Hello Adonis</title>
-  {{ style('style') }}
+	<title>Home</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+	<link href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" rel="stylesheet">
 </head>
 <body>
-  <section>
-    <div class="logo"></div>
-    <div class="title"></div>
-    <div class="subtitle">
-      <p>AdonisJs simplicity will make you feel confident about your code</p>
-      <p>
-        Don't know where to start? Read the <a href="https://adonisjs.com/docs">documentation</a>.
-      </p>
+
+@!component('components.navbar')
+
+<div class="container-fluid text-center">
+	<div class="row content">
+    <div class="col-sm-1 sidenav">
+		@!component('components.sidebar-nav')
     </div>
-  </section>
+	<main class="main-content col-lg-11 col-md-11 col-sm-11 p-0">
+		<div class="col-md-12 main-page-header">
+			<div class="col-md-3 left-title-header">
+				<h4>Home</h4>
+				<h6><a href="/campaigns">See Campaign Data</a></h6>
+			</div>
+			<div class="col-md-3"></div>
+			<div class="col-md-2"></div>
+
+			<div class="col-md-4" >
+
+			</div>
+		</div>
+
+	</main>
+	</div>
+</div>
 </body>
 </html>

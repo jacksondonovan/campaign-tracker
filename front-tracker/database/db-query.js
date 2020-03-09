@@ -1,5 +1,5 @@
 const Database = use('Database')
-const PAGINATION_LIMIT = 75
+const PAGINATION_LIMIT = 100
 
 async function getCampaigns(data, pagination) {
 	let campaigns

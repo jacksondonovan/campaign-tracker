@@ -16,17 +16,9 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-const Database = use('Database')
-
-Route.get('/users', async () => {
-	return await Database.table('users').select('*')
-})
-
-//Adonis View Routes
+Route.on('/').render('welcome')
 
 Route.get('/sources', 							'SourceController.get')
 Route.get('/products', 							'ProductController.get')
 Route.get('/campaigns/:pagination?',			'CampaignController.get')
 Route.post('/campaign/add',						'CampaignController.add')
-
-Route.on('/').render('welcome')

@@ -1,10 +1,10 @@
 'use strict'
 
-const Database = use('Database')
+const { getAllProducts } = require('../../../database/db-query')
 
 class ProductController {
-	async get({ request, response, view }) {
-		const products = await Database.table('products').select('*')
+	async get({ view }) {
+		const products = await getAllProducts()
 
 		return view.render('products.edge', { products: products })
 	}

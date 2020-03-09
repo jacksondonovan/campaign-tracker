@@ -1,10 +1,10 @@
 'use strict'
 
-const Database = use('Database')
+const { getAllSources } = require('../../../database/db-query')
 
 class SourceController {
-	async get({ request, response, view }) {
-		const sources = await Database.table('sources').select('*')
+	async get({ view }) {
+		const sources = await getAllSources()
 
 		return view.render('sources.edge', { sources: sources })
 	}
